@@ -5,8 +5,9 @@ from datetime import datetime
 # Configurazione della pagina
 st.set_page_config(page_title="Atletica Team App", page_icon="🏃‍♂️", layout="wide")
 
-# ---- SIMULAZIONE DATABASE (Sostituibile con il tuo foglio Google) ----
-# Nella versione finale, queste tabelle verranno caricate direttamente online
+# ---- DATABASE REALE DA GOOGLE FOGLI ----
+# Sostituisci il link qui sotto con quello del tuo foglio Google abilitato alla lettura pubblica
+LINK_FOGLIO = "https://docs.google.com/spreadsheets/d/1fm1K3lc2kXAKc9h2QmIOZPU_4y61T6KBEAXPJvgpN_4/edit?usp=drive_link"
 @st.cache_data
 def carica_dati_esempio():
     allenatori = pd.DataFrame([
