@@ -7,7 +7,7 @@ st.set_page_config(page_title="Atletica Team App", page_icon="🏃‍♂️", la
 
 # ---- DATABASE REALE DA GOOGLE FOGLI ----
 # Sostituisci il link qui sotto con quello del tuo foglio Google abilitato alla lettura pubblica
-LINK_FOGLIO = "https://docs.google.com/spreadsheets/d/1fm1K3lc2kXAKc9h2QmIOZPU_4y61T6KBEAXPJvgpN_4/edit?gid=1395994377#gid=1395994377"
+LINK_FOGLIO = "https://docs.google.com/spreadsheets/d/1fm1K3lc2kXAKc9h2QmIOZPU_4y61T6KBEAXPJvgpN_4/edit?usp=drive_link"
 
 @st.cache_data(ttl=60) # Aggiorna i dati dal foglio automaticamente ogni 60 secondi
 def carica_dati_fogli(url):
@@ -40,6 +40,7 @@ except Exception as e:
     st.stop()
 
 # ---- DA QUI IN POI IL CODICE DEL LOGIN E DEI PANNELLI RIMANE IDENTICO A PRIMA ----
+
 # ---- INTERFACCIA DI LOGIN ----
 st.title("🏃‍♂️ Sistema Gestione Atletica Leggera")
 st.write("Benvenuto nell'app della tua squadra. Inserisci la tua email per accedere.")
