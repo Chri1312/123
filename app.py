@@ -7,25 +7,39 @@ st.set_page_config(page_title="Atletica Team App", page_icon="🏃‍♂️", la
 
 # ---- DATABASE REALE DA GOOGLE FOGLI ----
 # Sostituisci il link qui sotto con quello del tuo foglio Google abilitato alla lettura pubblica
-LINK_FOGLIO = "https://docs.google.com/spreadsheets/d/1fm1K3lc2kXAKc9h2QmIOZPU_4y61T6KBEAXPJvgpN_4/edit?usp=drive_link"
-@st.cache_data
-def carica_dati_esempio():
-    allenatori = pd.DataFrame([
-        {"ID_Allenatore": "ALL01", "Nome": "Marco", "Cognome": "Rossi", "Email": "coach@atletica.it", "Specialità": "Velocità"}
-    ])
-    atleti = pd.DataFrame([
-        {"ID_Atleta": "ATL01", "ID_Allenatore": "ALL01", "Nome": "Luca", "Cognome": "Bianchi", "Email": "atleta@atletica.it", "Data_Nascita": "2005-04-12", "Tessera_FIDAL": "AA012345", "Link_Profilo_FIDAL": "https://fidal.it", "Scadenza_Visita_Medica": "2025-12-31"}
-    ])
-    gare = pd.DataFrame([
-        {"ID_Gara": "GAR01", "Nome_Gara": "Campionati Regionali Assoluti", "Data_Gara": "2027-06-15", "Luogo": "Milano", "Tipo_Gara": "Pista Outdoor", "Link_Dispositivo_FIDAL": "https://fidal.it"}
-    ])
-    prestazioni = pd.DataFrame([
-        {"ID_Prestazione": "P01", "ID_Atleta": "ATL01", "ID_Gara": "GAR01", "Gara_Specialità": "100m", "Stato_Convocazione": "Convocato", "Risultato_Ottenuto": "-", "Note_Gara": "-"}
-    ])
+LINK_FOGLIO = "INCOLLA_QUI_IL_TUO_LINK_DI_GOOGLE_FOGLI"
+
+@st.cache_data(ttl=60) # Aggiorna i dati dal foglio automaticamente ogni 60 secondi
+def carica_dati_fogli(url):
+    # Estrae l'ID del foglio dal link per poter leggere le singole schede
+    sheet_id = url.split("/d/")[1].split("/")[0]
+    
+    # Crea i link diretti per scaricare le 4 tabelle in formato CSV
+    url_allenatori = f"https://google.com{sheet_id}/gviz/tq?tqx=out:csv&sheet=Allenatori"
+    url_atleti = f"https://google.com{sheet_id}/gviz/tq?tqx=out:csv&sheet=Atleti"
+    url_gare = f"https://google.com{sheet_id}/gviz/tq?tqx=out:csv&sheet=Calendario_Gare"
+    url_prestazioni = f"https://google.com{sheet_id}/gviz/tq?tqx=out:csv&sheet=Prestazioni_e_Convocazioni"
+    
+    # Legge i dati inserendoli nelle tabelle dell'applicazione
+    allenatori = pd.read_csv(url_allenatori)
+    atleti = pd.read_csv(url_atleti)
+    gare = pd.read_csv(url_gare)
+    prestazioni = pd.read_csv(url_prestazioni)
+    
+    # Converte i formati data per evitare errori nei controlli della visita medica
+    atleti['Scadenza_Visita_Medica'] = pd.to_datetime(atleti['Scadenza_Visita_Medica']).dt.strftime('%Y-%m-%d')
+    gare['Data_Gara'] = pd.to_datetime(gare['Data_Gara']).dt.strftime('%Y-%m-%d')
+    
     return allenatori, atleti, gare, prestazioni
 
-df_allenatori, df_atleti, df_gare, df_prestazioni = carica_dati_esempio()
+# Caricamento effettivo dei dati dal web
+try:
+    df_allenatori, df_atleti, df_gare, df_prestazioni = carica_dati_fogli(LINK_FOGLIO)
+except Exception as e:
+    st.error("Errore nel collegamento a Google Fogli. Controlla di aver inserito il link corretto e di aver impostato la condivisione su 'Chiunque abbia il link'.")
+    st.stop()
 
+# ---- DA QUI IN POI IL CODICE DEL LOGIN E DEI PANNELLI RIMANE IDENTICO A PRIMA ----
 # ---- INTERFACCIA DI LOGIN ----
 st.title("🏃‍♂️ Sistema Gestione Atletica Leggera")
 st.write("Benvenuto nell'app della tua squadra. Inserisci la tua email per accedere.")
